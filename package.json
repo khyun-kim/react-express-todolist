@@ -1,0 +1,17 @@
+{
+  "name": "react-express-todolist",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "server": "cd server && nodemon server.js",
+    "front": "cd web && npm run start",
+    "dev": "concurrently \"npm run server \" \"npm run front\""
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  },
+  "dependencies": {
+    "concurrently": "^5.1.0"
+  }
+}
