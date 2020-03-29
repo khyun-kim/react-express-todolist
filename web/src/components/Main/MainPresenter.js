@@ -7,11 +7,11 @@ class MainPresenter extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            cookie: cookie.load('login-cookie')
+            cookie: cookie.load('session')
         };
     }
     componentDidMount() {
-        console.log(this.state.cookie);
+        console.log(cookie.load(`session`));
     }
     render() {
         if (this.props.value.valid === false) {

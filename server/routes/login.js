@@ -1,8 +1,16 @@
 const Router = require('express').Router();
 Router.get('/', (req, res) => {
-    res.json({
-        state: `Error`,
-        message: `해당 URL은 GET으로 접근할 수 없습니다.`
-    });
+    const session = req.session;
+    console.log('this is get method');
+    console.log(`session ID : ${req.sessionID} email : ${session.email}`);
+    res.send(req.session);
+});
+Router.post(`/`, (req, res) => {
+    const session = req.session;
+    console.log('this is post method');
+    session.email = 'aa@aaa.com';
+    console.log(session);
+    console.log(req.sessionID);
+    res.send(req.session);
 });
 module.exports = Router;

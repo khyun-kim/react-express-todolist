@@ -1,14 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import cookie from 'react-cookies';
 
 const LoginFormPresenter = () => {
     const [userInfo, setUserInfo] = React.useState({ email: '', password: '' });
-
     const handleSubmit = e => {
         e.preventDefault();
-        cookie.save('login-cookie', { sid: 'sid-value' });
+        axios.get('/api/login').then(res => console.log(res));
+        console.log(cookie.load(`session`));
     };
     const handleEmailChange = e => {
         setUserInfo({ ...userInfo, email: e.target.value });
