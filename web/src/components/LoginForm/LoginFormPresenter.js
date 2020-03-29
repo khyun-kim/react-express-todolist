@@ -1,15 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import cookie from 'react-cookies';
 
 const LoginFormPresenter = () => {
     const [userInfo, setUserInfo] = React.useState({ email: '', password: '' });
 
     const handleSubmit = e => {
         e.preventDefault();
-        console.log(
-            `email : "${userInfo.email}", password : "${userInfo.password}`
-        );
+        cookie.save('login-cookie', { sid: 'sid-value' });
     };
     const handleEmailChange = e => {
         setUserInfo({ ...userInfo, email: e.target.value });
