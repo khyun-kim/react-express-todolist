@@ -1,2 +1,2 @@
-import RegisterFormPresenter from './RegisterFormPresenter';
-export default RegisterFormPresenter;
+import RegisterFormContainer from './RegisterFormContainer';
+export default RegisterFormContainer;

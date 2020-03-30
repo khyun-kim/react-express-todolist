@@ -2,8 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import validateEmail from '../../utils/EmailValidation';
+import { Redirect } from 'react-router-dom';
 
-const RegisterFormPresenter = () => {
+const RegisterFormPresenter = props => {
     const [registerInfo, setRegisterInfo] = React.useState({
         email: '',
         password: '',
@@ -15,16 +16,19 @@ const RegisterFormPresenter = () => {
     const handleRegisterSubmit = e => {
         e.preventDefault();
         if (!isEnableBtn) return;
-        console.log(
-            `email : ${registerInfo.email}, password : ${registerInfo.password}, checkPW : ${registerInfo.check}`
-        );
         axios
-            .post('/api/register', {
+            .put('/api/auth', {
                 email: registerInfo.email,
                 password: registerInfo.password
             })
             .then(res => {
-                console.log(res);
+                console.log(res.data);
+                if (res.data.status === 'success') {
+                    props.login(registerInfo.email);
+                    props.history.push(`/`);
+                } else if (res.data.status === 'CONSTRAINT ERROR') {
+                    alert('이미 존재하는 이메일입니다.');
+                }
             });
     };
     React.useEffect(() => {

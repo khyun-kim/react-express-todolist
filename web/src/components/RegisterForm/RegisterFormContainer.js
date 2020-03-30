@@ -1,15 +1,20 @@
 import React, { Component } from 'react';
-import MainPresenter from './MainPresenter';
+import RegisterFormPresenter from './RegisterFormPresenter';
 
 import { connect } from 'react-redux';
 import { login, logoff } from '../../store/modules/auth';
 
-class MainContainer extends Component {
+class RegisterFormContainer extends Component {
     constructor(props) {
         super(props);
     }
     render() {
-        return <MainPresenter value={this.props.store} />;
+        return (
+            <RegisterFormPresenter
+                history={this.props.history}
+                login={this.props.login}
+            />
+        );
     }
 }
 
@@ -22,4 +27,7 @@ const mapDispatchToProps = dispatch => ({
     login: (sid, username) => dispatch(login(sid, username)),
     logoff: () => dispatch(logoff())
 });
-export default connect(mapStateToProps, mapDispatchToProps)(MainContainer);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(RegisterFormContainer);

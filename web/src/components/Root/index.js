@@ -1,2 +1,2 @@
-import RootPresenter from './RootPresenter';
-export default RootPresenter;
+import RootContainer from './RootContainer';
+export default RootContainer;
