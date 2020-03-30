@@ -13,9 +13,10 @@ app.use(
         resave: true,
         saveUninitialized: true,
         name: 'session',
+        rolling: true,
         cookie: {
             secure: false,
-            maxAge: 1800000, // 1시간
+            maxAge: 1000 * 60 * 15, // 15분
             httpOnly: false
         }
     })
