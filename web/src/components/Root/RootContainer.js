@@ -9,17 +9,6 @@ import { login, logoff } from '../../store/modules/auth';
 class RootContainer extends Component {
     constructor(props) {
         super(props);
-        // 세션 쿠키 존재 여부 확인
-        let sessionCookie = cookie.load('session');
-        if (sessionCookie !== undefined) {
-            axios.get('/api/auth').then(res => {
-                if (res.status === 204) {
-                    this.props.logoff();
-                } else {
-                    this.props.login(res.data.email);
-                }
-            });
-        }
     }
     render() {
         return <RootPresenter value={this.props.store} />;

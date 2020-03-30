@@ -3,12 +3,9 @@ import LoginForm from '../LoginForm';
 import TodoList from '../TodoLists';
 
 class MainPresenter extends Component {
-    constructor(props) {
-        super(props);
-    }
     render() {
         if (this.props.value.email === '') {
-            return <LoginForm />;
+            return <LoginForm login={this.props.login} />;
         } else {
             return <TodoList />;
         }

@@ -1,5 +1,5 @@
 const Router = require('express').Router();
-const { registerEmail } = require('../utils/db_action');
+const { passwordCheck, registerEmail } = require('../utils/db_action');
 
 //세션 정보 조회
 Router.get('/', (req, res) => {
@@ -16,12 +16,30 @@ Router.get('/', (req, res) => {
 
 //로그인
 Router.post(`/`, (req, res) => {
-    const session = req.session;
-    // 데이터베이스 조회 처리 후 session email에 주입할 것.
-    session.email = 'aa@aaa.com';
-    console.log(session);
-    console.log(req.sessionID);
-    res.send(req.session);
+    console.log(`[REQ] /api/auth $ POST Method / ${req.sessionID}`);
+    const email = req.body.email;
+    const password = req.body.password;
+    if (email !== '' && password !== '') {
+        passwordCheck(email, password, rows => {
+            if (rows) {
+                console.log(
+                    `[RES] /api/auth $ GET Method LOGIN SUCCESS / ${req.sessionID}`
+                );
+                req.session.email = email;
+                res.json({ status: 'LOGIN SUCCESS' });
+            } else {
+                console.log(
+                    `[RES] /api/auth $ GET Method LOGIN FAILED / ${req.sessionID}`
+                );
+                res.json({ status: 'LOGIN FAILED' });
+            }
+        });
+    } else {
+        res.json({
+            status: 'INCORRECT INFO ERROR',
+            message: '이메일이나 비밀번호를 입력하지 않았습니다.'
+        });
+    }
 });
 
 //회원가입

@@ -2,14 +2,21 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import cookie from 'react-cookies';
 
-const LoginFormPresenter = () => {
+const LoginFormPresenter = props => {
     const [userInfo, setUserInfo] = React.useState({ email: '', password: '' });
     const handleSubmit = e => {
         e.preventDefault();
-        axios.get('/api/login').then(res => console.log(res));
-        console.log(cookie.load(`session`));
+        axios
+            .post('/api/auth', {
+                email: userInfo.email,
+                password: userInfo.password
+            })
+            .then(res => {
+                if (res.data.status === 'LOGIN SUCCESS') {
+                    props.login(userInfo.email);
+                }
+            });
     };
     const handleEmailChange = e => {
         setUserInfo({ ...userInfo, email: e.target.value });
