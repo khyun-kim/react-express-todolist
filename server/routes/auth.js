@@ -5,7 +5,7 @@ const { passwordCheck, registerEmail } = require('../utils/db_action');
 Router.get('/', (req, res) => {
     console.log(`[REQ] /api/auth $ GET method / ${req.sessionID}`);
     const session = req.session;
-    if (session.email === undefined) {
+    if (session.index === undefined) {
         console.log(`[RES] /api/auth $ 204 / ${req.sessionID}`);
         res.status(204).json({ status: 'NOT LOGIN' });
     } else {
@@ -37,6 +37,7 @@ Router.post(`/`, (req, res) => {
                 console.log(
                     `[RES] /api/auth $ GET Method LOGIN SUCCESS / ${req.sessionID}`
                 );
+                req.session.index = rows.id;
                 req.session.email = email;
                 res.json({ status: 'LOGIN SUCCESS' });
             } else {

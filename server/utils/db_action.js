@@ -14,7 +14,31 @@ const registerEmail = (email, password, callback) => {
     //db.run(sql,callback(res,err))
     db.run(
         `INSERT INTO User(email,password) values('${email}','${password}');`,
-        err => {
+        (err) => {
+            if (err) {
+                callback(err);
+            } else {
+                callback();
+            }
+        }
+    );
+};
+const getAllTodos = (UserID, callback) => {
+    db.all(
+        `SELECT id, todo, done FROM TodoLists WHERE userID = ${UserID} ORDER BY id DESC;`,
+        (err, rows) => {
+            if (err) {
+                console.log(err);
+            }
+            callback(rows);
+        }
+    );
+};
+
+const insertTodo = (UserID, todo, callback) => {
+    db.run(
+        `INSERT INTO TodoLists(userID,todo,done) values(${UserID},'${todo}',0);`,
+        (err) => {
             if (err) {
                 callback(err);
             } else {
@@ -26,5 +50,7 @@ const registerEmail = (email, password, callback) => {
 
 module.exports = {
     registerEmail,
-    passwordCheck
+    passwordCheck,
+    getAllTodos,
+    insertTodo,
 };

@@ -1,56 +1,75 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import cookie from 'react-cookies';
 import styled from 'styled-components';
 import axios from 'axios';
 
-class TodoListsPresenter extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            todoInputValue: '',
-            todolist: {},
-        };
-        this.LogoutBtnOnClick = (e) => {
-            // redux email ''로 만들기
-            // session 쿠키 삭제
-            // history.push(/)
-            axios.get('/api/auth/logout').then(() => {
-                props.logoff();
-                cookie.remove('session', { path: `/` });
-            });
-        };
-        this.handleTodoSubmit = (e) => {
-            e.preventDefault();
-        };
-        this.handleTodoInputChange = (e) => {
-            this.setState({
-                ...this.state,
-                todoInputValue: e.target.value,
-            });
-        };
-    }
-    componentDidmound() {
-        // todo list 신청하는 코드
-    }
+function TodoListsPresenter(props) {
+    const [todoInputValue, setTodoInputValue] = useState('');
+    const [todoList, setTodoList] = useState([]);
 
-    render() {
-        return (
-            <Container>
-                <LogoutBtn onClick={this.LogoutBtnOnClick}>logout</LogoutBtn>
-                <Form onSubmit={this.handleTodoSubmit}>
-                    <TodoInput
-                        placeholder="할일을 입력해주세요"
-                        value={this.state.todoInputValue}
-                        onChange={this.handleTodoInputChange}
-                        type="text"
-                    />
-                    <SubmitButton type="submit">+</SubmitButton>
-                </Form>
-                <TodoListContainer></TodoListContainer>
-            </Container>
-        );
-    }
+    const LogoutBtnOnClick = (e) => {
+        // redux email ''로 만들기
+        // session 쿠키 삭제
+        // history.push(/)
+        axios.get('/api/auth/logout').then(() => {
+            props.logoff();
+            cookie.remove('session', { path: `/` });
+        });
+    };
+    const handleTodoSubmit = (e) => {
+        e.preventDefault();
+        axios
+            .put('/api/todo', {
+                todo: todoInputValue,
+            })
+            .then(() => {
+                axios.get('/api/todo').then((res) => {
+                    setTodoList(res.data.rows);
+                });
+            });
+    };
+    const handleTodoInputChange = (e) => {
+        setTodoInputValue(e.target.value);
+    };
+    useEffect(() => {
+        axios.get('/api/todo').then((res) => {
+            setTodoList(res.data.rows);
+        });
+    }, []);
+    return (
+        <Container>
+            <LogoutBtn onClick={LogoutBtnOnClick}>logout</LogoutBtn>
+            <Form onSubmit={handleTodoSubmit}>
+                <TodoInput
+                    placeholder="할일을 입력해주세요"
+                    value={todoInputValue}
+                    onChange={handleTodoInputChange}
+                    type="text"
+                />
+                <SubmitButton type="submit">+</SubmitButton>
+            </Form>
+            <TodoListContainer>
+                {todoList.map((value) => {
+                    return (
+                        <TodoListItem
+                            key={value.id}
+                            id={value.id}
+                            todo={value.todo}
+                            done={value.done}
+                        />
+                    );
+                })}
+            </TodoListContainer>
+        </Container>
+    );
 }
+const TodoListItem = (props) => {
+    const todo = props.todo || '냉무';
+    const id = props.id || -1;
+    const done = props.done || 0;
+    return <TodoListItemContainer>{todo}</TodoListItemContainer>;
+};
+const TodoListItemContainer = styled.div``;
 const LogoutBtn = styled.button`
     width: 100px;
     margin: 10px 0px;
