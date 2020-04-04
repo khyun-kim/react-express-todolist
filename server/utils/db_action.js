@@ -23,6 +23,17 @@ const registerEmail = (email, password, callback) => {
         }
     );
 };
+const setTodoDone = (UserID, TodoID, done, callback) => {
+    db.run(
+        `UPDATE TodoLists set done = ${done} WHERE userID = ${UserID} AND id = ${TodoID};`,
+        (err) => {
+            if (err) {
+                console.log('[ERR] DB UPDATE ERROR');
+            }
+            callback(err);
+        }
+    );
+};
 const getAllTodos = (UserID, callback) => {
     db.all(
         `SELECT id, todo, done FROM TodoLists WHERE userID = ${UserID} ORDER BY id DESC;`,
@@ -53,4 +64,5 @@ module.exports = {
     passwordCheck,
     getAllTodos,
     insertTodo,
+    setTodoDone,
 };

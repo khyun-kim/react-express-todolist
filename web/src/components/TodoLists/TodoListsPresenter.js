@@ -5,7 +5,7 @@ import axios from 'axios';
 
 function TodoListsPresenter(props) {
     const [todoInputValue, setTodoInputValue] = useState('');
-    const [todoList, setTodoList] = useState([]);
+    const [todoList, setTodoList] = useState({ list: [] });
 
     const LogoutBtnOnClick = (e) => {
         // redux email ''로 만들기
@@ -16,15 +16,30 @@ function TodoListsPresenter(props) {
             cookie.remove('session', { path: `/` });
         });
     };
+    const handleDoneBtnClick = (index) => {
+        const nextDone = todoList.list[index].done === 0 ? 1 : 0;
+        axios
+            .put('/api/todo', {
+                TodoID: todoList.list[index].id,
+                done: nextDone,
+            })
+            .then((res) => {
+                if (res.data.status === 'success') {
+                    const tmp = { ...todoList };
+                    tmp.list[index].done = nextDone;
+                    setTodoList(tmp);
+                }
+            });
+    };
     const handleTodoSubmit = (e) => {
         e.preventDefault();
         axios
-            .put('/api/todo', {
+            .post('/api/todo', {
                 todo: todoInputValue,
             })
             .then(() => {
                 axios.get('/api/todo').then((res) => {
-                    setTodoList(res.data.rows);
+                    setTodoList({ list: res.data.rows });
                 });
             });
     };
@@ -33,7 +48,7 @@ function TodoListsPresenter(props) {
     };
     useEffect(() => {
         axios.get('/api/todo').then((res) => {
-            setTodoList(res.data.rows);
+            setTodoList({ list: res.data.rows });
         });
     }, []);
     return (
@@ -49,27 +64,46 @@ function TodoListsPresenter(props) {
                 <SubmitButton type="submit">+</SubmitButton>
             </Form>
             <TodoListContainer>
-                {todoList.map((value) => {
+                {todoList.list.map((value, index) => {
                     return (
-                        <TodoListItem
-                            key={value.id}
-                            id={value.id}
-                            todo={value.todo}
-                            done={value.done}
-                        />
+                        <TodoListItemContainer key={value.id}>
+                            <TodoListItemText done={value.done}>
+                                {value.todo}
+                            </TodoListItemText>
+                            <TodoListItemButton
+                                done={value.done}
+                                onClick={() => handleDoneBtnClick(index)}
+                            >
+                                ✅
+                            </TodoListItemButton>
+                        </TodoListItemContainer>
                     );
                 })}
             </TodoListContainer>
         </Container>
     );
 }
-const TodoListItem = (props) => {
-    const todo = props.todo || '냉무';
-    const id = props.id || -1;
-    const done = props.done || 0;
-    return <TodoListItemContainer>{todo}</TodoListItemContainer>;
-};
-const TodoListItemContainer = styled.div``;
+const TodoListItemContainer = styled.div`
+    margin: 5px;
+    display: flex;
+    flex-direction: row;
+    background-color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+`;
+const TodoListItemText = styled.p`
+    flex: 1;
+    text-decoration: ${(props) => (props.done ? 'line-through' : 'none')};
+`;
+const TodoListItemButton = styled.button`
+    border: 0;
+    border-radius: 50%;
+    background-color: ${(props) => (props.done ? '#777777' : '#aaaaee')};
+    width: 32px;
+    height: 32px;
+    margin: auto;
+    cursor: pointer;
+`;
 const LogoutBtn = styled.button`
     width: 100px;
     margin: 10px 0px;

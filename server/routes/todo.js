@@ -1,5 +1,5 @@
 const Router = require(`express`).Router();
-const { getAllTodos, insertTodo } = require('../utils/db_action');
+const { getAllTodos, insertTodo, setTodoDone } = require('../utils/db_action');
 
 Router.get('/', (req, res) => {
     const userID = req.session.index;
@@ -17,8 +17,8 @@ Router.get('/', (req, res) => {
         });
     }
 });
-Router.put(`/`, (req, res) => {
-    console.log(`[REQ] /api/todo PUT Method / ${req.sessionID}`);
+Router.post(`/`, (req, res) => {
+    console.log(`[REQ] /api/todo POST Method / ${req.sessionID}`);
     const { todo } = req.body;
     const userID = req.session.index;
     if (todo === undefined) {
@@ -33,6 +33,24 @@ Router.put(`/`, (req, res) => {
                 console.log(err);
                 res.json({ status: 'error', message: 'Insert Error' });
             } else {
+                res.json({ status: 'success' });
+            }
+        });
+    }
+});
+Router.put('/', (req, res) => {
+    const { TodoID, done } = req.body;
+    const userID = req.session.index;
+    if (!TodoID || done === undefined) {
+        console.log('잘못된 요청');
+        res.status(400).json({ status: 'error' });
+    } else {
+        setTodoDone(userID, TodoID, done, (err) => {
+            if (err) {
+                console.log(`[REQ] ERR`);
+                res.status(400).json({ status: 'error' });
+            } else {
+                console.log(`[REQ] SUCCESS`);
                 res.json({ status: 'success' });
             }
         });
