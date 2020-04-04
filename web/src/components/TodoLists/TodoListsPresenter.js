@@ -1,26 +1,42 @@
 import React, { Component } from 'react';
+import cookie from 'react-cookies';
 import styled from 'styled-components';
+import axios from 'axios';
 
 class TodoListsPresenter extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            todoInputValue: ''
+            todoInputValue: '',
+            todolist: {},
         };
-        this.handleTodoSubmit = e => {
-            e.preventDefault();
-        };
-        this.handleTodoInputChange = e => {
-            this.setState({
-                ...this.state,
-                todoInputValue: e.target.value
+        this.LogoutBtnOnClick = (e) => {
+            // redux email ''로 만들기
+            // session 쿠키 삭제
+            // history.push(/)
+            axios.get('/api/auth/logout').then(() => {
+                props.logoff();
+                cookie.remove('session', { path: `/` });
             });
         };
+        this.handleTodoSubmit = (e) => {
+            e.preventDefault();
+        };
+        this.handleTodoInputChange = (e) => {
+            this.setState({
+                ...this.state,
+                todoInputValue: e.target.value,
+            });
+        };
+    }
+    componentDidmound() {
+        // todo list 신청하는 코드
     }
 
     render() {
         return (
             <Container>
+                <LogoutBtn onClick={this.LogoutBtnOnClick}>logout</LogoutBtn>
                 <Form onSubmit={this.handleTodoSubmit}>
                     <TodoInput
                         placeholder="할일을 입력해주세요"
@@ -35,6 +51,14 @@ class TodoListsPresenter extends Component {
         );
     }
 }
+const LogoutBtn = styled.button`
+    width: 100px;
+    margin: 10px 0px;
+    border: 0;
+    background-color: #10acbd;
+    text-transform: uppercase;
+    border-radius: 3px;
+`;
 const Container = styled.div`
     display: flex;
     flex-direction: column;

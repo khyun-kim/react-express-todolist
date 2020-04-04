@@ -13,6 +13,18 @@ Router.get('/', (req, res) => {
         res.json({ status: 'LOGIN', email: session.email });
     }
 });
+Router.get('/logout', (req, res) => {
+    console.log(`[REQ] /api/auth/logout $ GET method / ${req.sessionID}`);
+    req.session.destroy((err) => {
+        if (err) {
+            console.log(`[ERR] /api/auth/logout $ Session destroy Error`);
+            console.log(err);
+        } else {
+            console.log(`[INFO] Session Destroy`);
+        }
+    });
+    res.json({ status: `LOGOUT`, message: 'succsess' });
+});
 
 //로그인
 Router.post(`/`, (req, res) => {
@@ -20,7 +32,7 @@ Router.post(`/`, (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     if (email !== '' && password !== '') {
-        passwordCheck(email, password, rows => {
+        passwordCheck(email, password, (rows) => {
             if (rows) {
                 console.log(
                     `[RES] /api/auth $ GET Method LOGIN SUCCESS / ${req.sessionID}`
@@ -37,7 +49,7 @@ Router.post(`/`, (req, res) => {
     } else {
         res.json({
             status: 'INCORRECT INFO ERROR',
-            message: '이메일이나 비밀번호를 입력하지 않았습니다.'
+            message: '이메일이나 비밀번호를 입력하지 않았습니다.',
         });
     }
 });
@@ -53,10 +65,10 @@ Router.put('/', (req, res) => {
         );
         res.status(400).json({
             status: 'INCORRECT REQUEST',
-            message: '이메일과 비밀번호를 제대로 입력해주세요.'
+            message: '이메일과 비밀번호를 제대로 입력해주세요.',
         });
     } else {
-        registerEmail(email, password, err => {
+        registerEmail(email, password, (err) => {
             if (err) {
                 console.log('에러발생');
                 switch (err.errno) {
@@ -64,7 +76,7 @@ Router.put('/', (req, res) => {
                         console.log(`이메일 중복에러`);
                         res.json({
                             status: 'CONSTRAINT ERROR',
-                            message: '이메일이 중복되었습니다.'
+                            message: '이메일이 중복되었습니다.',
                         });
                         break;
                     default:

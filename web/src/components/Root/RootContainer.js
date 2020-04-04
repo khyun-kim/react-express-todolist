@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import cookie from 'react-cookies';
 import RootPresenter from './RootPresenter';
-import axios from 'axios';
 
 import { connect } from 'react-redux';
 import { login, logoff } from '../../store/modules/auth';

@@ -15,6 +15,8 @@ const LoginFormPresenter = props => {
             .then(res => {
                 if (res.data.status === 'LOGIN SUCCESS') {
                     props.login(userInfo.email);
+                } else if (res.data.status === 'LOGIN FAILED') {
+                    alert('로그인에 실패하였습니다.');
                 }
             });
     };
